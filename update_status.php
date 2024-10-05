@@ -19,7 +19,7 @@ if (isset($_GET['slots'])) {
             $slot_number = $i + 1; // Assuming slot_number starts from 1
 
             // Update the status in the database
-            $sql = "UPDATE parking_slots SET status = '$slot_status' WHERE slot_number = '$slot_number'";
+            $sql = "UPDATE parking_slots SET status = '$slot_status' WHERE slot_id = '$slot_number'";
             if (!$conn->query($sql)) {
                 echo "Error updating slot $slot_number: " . $conn->error;
             }
