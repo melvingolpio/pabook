@@ -5,7 +5,7 @@ $pass = 'de9cac97';
 $dbname = 'heroku_8c20245ae7e92fd';
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($host, $user, $pass, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
@@ -68,4 +68,5 @@ $conn->close();
     </div>
 </body>
 </html>
+
 
