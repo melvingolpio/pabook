@@ -1,33 +1,37 @@
+
 <?php
-// Database connection
-$host = 'us-cluster-east-01.k8s.cleardb.net';
-$user = 'b045ef9e80a154';
-$pass = 'de9cac97';
-$dbname = 'heroku_8c20245ae7e92fd';
-$conn = new mysqli($host, $user, $pass, $dbname);
+// Database connection (Make sure this part works)
+$conn = new mysqli("us-cluster-east-01.k8s.cleardb.net", "b045ef9e80a154", "de9cac97", "heroku_8c20245ae7e92fd");
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Iterate through slots 1 to 6 and update each slot status
-for ($i = 1; $i <= 6; $i++) {
-    if (isset($_GET['slot' . $i])) {
-        $status = $_GET['slot' . $i];
+// Get the 'slots' parameter from the GET request
+if (isset($_GET['slots'])) {
+    $slots = $_GET['slots'];
 
-        // Validate the status value to avoid SQL injection or bad input
-        if (in_array($status, ['available', 'reserved', 'occupied'])) {
-            // Update the slot status in the database
-            $sql = "UPDATE parking_slots SET status='$status' WHERE slot_id=$i";
+    // Make sure the slots string is exactly 6 characters long
+    if (strlen($slots) == 6) {
+        // Update each slot in the database
+        for ($i = 0; $i < 6; $i++) {
+            $slot_status = $slots[$i]; // Get the status for this slot (0 or 1)
+            $slot_number = $i + 1; // Assuming slot_number starts from 1
 
-            if ($conn->query($sql) !== TRUE) {
-                echo "Error updating slot $i: " . $conn->error;
+            // Update the status in the database
+            $sql = "UPDATE parking_slots SET status = '$slot_status' WHERE slot_number = '$slot_number'";
+            if (!$conn->query($sql)) {
+                echo "Error updating slot $slot_number: " . $conn->error;
             }
         }
-    }
-}
 
-echo "All slots updated successfully";
+        echo "All slots updated successfully";
+    } else {
+        echo "Invalid slots data";
+    }
+} else {
+    echo "No slots data provided";
+}
 
 $conn->close();
 ?>
