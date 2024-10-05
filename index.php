@@ -54,7 +54,7 @@ $conn->close();
                     document.getElementById("parkingSlots").innerHTML = this.responseText;
                 }
             };
-            xhttp.open("GET", "fetch_slots.php", true);
+            xhttp.open("GET", "get_status.php", true);
             xhttp.send();
         }
 
