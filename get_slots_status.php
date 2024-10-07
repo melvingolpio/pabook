@@ -1,10 +1,9 @@
 <?php
 
-$host = "localhost";
-$username = "root";
-$password = ""; 
-$dbname = "pms"; 
-
+$host = 'us-cluster-east-01.k8s.cleardb.net';
+$user = 'b045ef9e80a154';
+$pass = 'de9cac97';
+$dbname = 'heroku_8c20245ae7e92fd';
 
 $conn = new mysqli($host, $username, $password, $dbname);
 
