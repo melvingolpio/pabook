@@ -17,6 +17,7 @@
         }
         .available { background-color: green; }
         .occupied { background-color: red; }
+        .reserved { background-color: yellow; }
     </style>
 
     <script>
