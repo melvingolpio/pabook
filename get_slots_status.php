@@ -13,7 +13,7 @@ if ($conn->connect_error) {
 }
 
 
-$sql = "SELECT status FROM parking_slots ORDER BY slot_number ASC";
+$sql = "SELECT status FROM parking_slots ORDER BY slot_id ASC";
 $result = $conn->query($sql);
 
 
