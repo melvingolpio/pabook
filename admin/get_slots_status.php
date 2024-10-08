@@ -2,7 +2,7 @@
 
 $host = "us-cluster-east-01.k8s.cleardb.net";
 $username = "b5f6a402460fa3";
-$password = "de9cac97"; 
+$password = "83f06a6b"; 
 $dbname = "heroku_706906bb621a740"; 
 
 
