@@ -61,11 +61,126 @@ if (isset($_POST['signin'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>User Login</title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="log.css">
+   
 </head>
+<style>
+    *{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: "Poppins", sans-serif;
+}
+
+body{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	background: url(img/cmu1.jpg) no-repeat;
+	background-size: cover;
+	background-position: center;
+	
+}
+
+
+.wrapper{
+	width: 420px;
+	background: rgba(0, 0, 0, .7);
+	border: 2px solid rgba(0, 0, 0, .2);
+	backdrop-filter: blur(20px);
+	box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+	color: white;
+	border-radius: 10px;
+	padding: 30px 40px;
+
+}
+.wrapper h1{
+	font-size: 36px;
+	text-align: center;
+	color: white;
+}
+
+.wrapper .input-box{
+	position: relative;
+	widows: 100%;
+	height: 50px;
+	margin: 30px 0;
+}
+
+
+.input-box input{
+	widows: 100%;
+	height: 100%;
+	background: transparent;
+	border: none;
+	outline: none;
+	border: 2px solid rgba(255, 255, 255, .2);
+	border-radius: 40px;
+	font-size: 16px;
+	color: white;
+	padding: 20px 45px 20px 20px;
+	position: relative;
+	
+
+}
+
+.input-box input::placeholder{
+	color: white;
+}
+
+.input-box i{
+	position: absolute;
+	right: 20px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 20px;
+}
+
+.input-box .toggle-password{
+	position: absolute;
+	right: 20px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 20px;
+	cursor:pointer;
+}
+
+.wrapper .forgot-pass{
+	margin: -15px 0 15px;
+}
+
+.forgot-pass a{
+	color: white;
+	text-decoration: none;
+
+}
+
+.forgot-pass a:hover{
+	text-decoration: underline;
+}
+
+.wrapper .btn{
+	width: 100%;
+	height: 45px;
+	background: blue;
+	border: none;
+	outline: none;
+	border-radius: 35px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+	cursor: pointer;
+	font-size: 16px;
+	color: white;
+	font-weight: 600;
+
+}
+.wrapper .btn:hover{
+    background: white;
+    color: black;
+}
+    </style>
 <body>
     <div class="wrapper">
-        <form action="index.php" method="post">
+        <form action="login.php" method="post">
             <h1 class="h2">Login</h1>
             <div class="input-box">
                 <input type="text" name="username" placeholder="Username" required>
