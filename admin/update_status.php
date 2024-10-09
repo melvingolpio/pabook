@@ -1,6 +1,10 @@
 <?php
-session_start();
-require('../dbconn.php');
+$host = "us-cluster-east-01.k8s.cleardb.net";
+$username = "b5f6a402460fa3";
+$password = "83f06a6b"; 
+$dbname = "heroku_706906bb621a740"; 
+
+$conn = new mysqli($host, $username, $password, $dbname);
 
 // Change the request method to POST
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['slot_id']) && isset($_POST['status'])) {
