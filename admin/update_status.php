@@ -6,58 +6,77 @@ $dbname = "heroku_706906bb621a740";
 
 $conn = new mysqli($host, $username, $password, $dbname);
 
+// Change the request method to POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the raw POST data
-    $data = json_decode(file_get_contents('php://input'), true);
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true); // Decode the JSON into an associative array
 
-    // Check if the data contains the expected keys
     if (isset($data['action']) && $data['action'] == 'update' && isset($data['slots'])) {
-        $slots = $data['slots']; // Get the slots JSON data
+        $slots = $data['slots']; // Get the slots from decoded data
 
-        if (json_last_error() === JSON_ERROR_NONE) {
-            foreach ($slots as $slot) {
-                $slot_id = intval($slot['slot_id']);
-                $status = $slot['status'];
+        foreach ($slots as $slot) {
+            $slot_id = intval($slot['slot_id']);
+            $status = $slot['status'];
 
-                // Prepare the statement for updating the parking slot status
-                $sql_update_slot = "UPDATE parking_slots SET status = ? WHERE slot_id = ?";
-                $stmt_update_slot = $conn->prepare($sql_update_slot);
-                $stmt_update_slot->bind_param('si', $status, $slot_id);
+            // Prepare the statement for updating the parking slot status
+            $sql_update_slot = "UPDATE parking_slots SET status = ? WHERE slot_id = ?";
+            $stmt_update_slot = $conn->prepare($sql_update_slot);
+            $stmt_update_slot->bind_param('si', $status, $slot_id);
 
-                if ($stmt_update_slot->execute()) {
-                    // If status is available, delete corresponding reservation
-                    if ($status === 'available') {
-                        // Check if there are any reservations for this slot
-                        $sql_check_reservation = "SELECT id FROM reservations WHERE slot_id = ? AND status = 'reserved'";
-                        $stmt_check_reservation = $conn->prepare($sql_check_reservation);
-                        $stmt_check_reservation->bind_param('i', $slot_id);
-                        $stmt_check_reservation->execute();
-                        $result_check_reservation = $stmt_check_reservation->get_result();
+            if ($stmt_update_slot->execute()) {
+                // If status is available, delete corresponding reservation
+                if ($status === 'available') {
+                    // Log the attempt to delete
+                    error_log("Attempting to delete reservation for slot ID: $slot_id\n");  // Logs to error log
 
-                        if ($result_check_reservation->num_rows > 0) {
-                            // Proceed to delete the reservation
-                            $sql_delete_reservation = "DELETE FROM reservations WHERE slot_id = ? AND status = 'reserved'";
-                            $stmt_delete_reservation = $conn->prepare($sql_delete_reservation);
-                            $stmt_delete_reservation->bind_param('i', $slot_id);
-                            $stmt_delete_reservation->execute();
-                            $stmt_delete_reservation->close();
+                    // Check if there are any reservations for this slot
+                    $sql_check_reservation = "SELECT id FROM reservations WHERE slot_id = ? AND status = 'reserved'";
+                    $stmt_check_reservation = $conn->prepare($sql_check_reservation);
+                    $stmt_check_reservation->bind_param('i', $slot_id);
+                    $stmt_check_reservation->execute();
+                    $result_check_reservation = $stmt_check_reservation->get_result();
+
+                    if ($result_check_reservation->num_rows > 0) {
+                        // Proceed to delete the reservation
+                        $sql_delete_reservation = "DELETE FROM reservations WHERE slot_id = ? AND status = 'reserved'";
+                        $stmt_delete_reservation = $conn->prepare($sql_delete_reservation);
+                        $stmt_delete_reservation->bind_param('i', $slot_id);
+
+                        if ($stmt_delete_reservation->execute()) {
+                            if ($stmt_delete_reservation->affected_rows > 0) {
+                                error_log("Reservation deleted for slot ID: $slot_id\n");
+                            } else {
+                                error_log("No reservation found for slot ID: $slot_id\n");
+                            }
+                        } else {
+                            error_log("Error deleting reservation: " . htmlspecialchars($stmt_delete_reservation->error) . "\n");
                         }
 
-                        $stmt_check_reservation->close();
+                        $stmt_delete_reservation->close();
+                    } else {
+                        error_log("No reservations found for slot ID: $slot_id before deletion.\n");
                     }
+
+                    $stmt_check_reservation->close();
                 }
 
-                $stmt_update_slot->close();
+                error_log("Parking slot status updated to $status for slot ID: $slot_id\n");
+            } else {
+                error_log("Error updating parking slot status: " . htmlspecialchars($stmt_update_slot->error) . "\n");
+                echo json_encode(["success" => false, "message" => "Error updating status"]);
             }
-            echo json_encode(["success" => true, "message" => "Status updated"]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Error decoding JSON"]);
+
+            $stmt_update_slot->close();
         }
+        echo json_encode(["success" => true, "message" => "Status updated"]);
     } else {
+        error_log("Invalid request: " . json_last_error_msg() . "\n");
         echo json_encode(["success" => false, "message" => "Invalid request"]);
     }
 } else {
-    echo json_encode(["success" => false, "message" => "Invalid request"]);
+    error_log("Invalid request method.\n");
+    echo json_encode(["success" => false, "message" => "Invalid request method"]);
 }
 
 $conn->close();
