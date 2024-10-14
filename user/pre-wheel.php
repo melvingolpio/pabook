@@ -26,12 +26,12 @@ if (!$vehicle) {
     exit();
 }
 
-$reservation_query = "SELECT * FROM reservations";
+$reservation_query = "SELECT * FROM parking_slots";
 $reservation_result = $conn->query($reservation_query);
 
 $reservations = [];
 while ($row = $reservation_result->fetch_assoc()) {
-    $reservations[$row['slot_number']] = array('plate_number' => $row['plate_number'], 'status' => $row['status']);
+    $reservations[$row['slot_id']] = array('status' => $row['status']);
 }
 
 $user_role = $_SESSION['role'];
